@@ -25,10 +25,8 @@ export const transferController = {
       // Find recipient user
       let toUserId;
       if (typeof recipient === 'number' || !isNaN(recipient)) {
-        // Recipient is user ID
         toUserId = parseInt(recipient);
       } else {
-        // Recipient is username or email
         const recipientUser = await transferService.findUserByIdentifier(recipient);
         if (!recipientUser) {
           return res.status(404).json({

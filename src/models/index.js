@@ -76,16 +76,71 @@ const Wallet = sequelize.define('Wallet', {
   timestamps: true
 });
 
+const Internal_transfer = sequelize.define('Internal_transfer', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  from_user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  to_user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  currency: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  amount: {
+    type: DataTypes.DECIMAL(20, 8),
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('PENDING', 'SUCCESS', 'FAILED'),
+    allowNull: false,
+    defaultValue: 'SUCCESS'
+  },
+  ip_address: {
+    type: DataTypes.STRING(45),
+    allowNull: true
+  },
+  note: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  }
+}, {
+  tableName: 'Internal_transfers', 
+  timestamps: true
+});
+
+// Define associations
 User.hasMany(Wallet, { foreignKey: 'user_id', as: 'wallets' });
 Wallet.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-// Create db object with all models
+// Add Internal_transfer associations
+User.hasMany(Internal_transfer, { foreignKey: 'from_user_id', as: 'SentTransfers' });
+User.hasMany(Internal_transfer, { foreignKey: 'to_user_id', as: 'ReceivedTransfers' });
+Internal_transfer.belongsTo(User, { foreignKey: 'from_user_id', as: 'fromUser' });
+Internal_transfer.belongsTo(User, { foreignKey: 'to_user_id', as: 'toUser' });
+
 const db = {
   sequelize,
   Sequelize,
   User,
-  Wallet
+  Wallet,
+  Internal_transfer  
 };
 
 export default db;
-export { User, Wallet, sequelize };
+export { User, Wallet, Internal_transfer, sequelize }; 
