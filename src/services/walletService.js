@@ -277,7 +277,6 @@ export const walletService = {
         throw new Error("Insufficient balance for transfer");
       }
 
-      // Update both wallets
       const updatedFromWallet = await fromWallet.update({
         balance: fromBalance - transferAmount,
       });
