@@ -1,22 +1,18 @@
 import { walletService } from '../services/walletService.js';
 
 export const walletController = {
-  // Get all wallets for authenticated user
   getWallets: async (req, res) => {
     try {
       const userId = req.user.id;
       
-      // Business logic - fetch user's wallets using service
       const wallets = await walletService.getUserWallets(userId);
 
-      // Response formatting
       res.json({
         success: true,
         data: wallets,
         message: 'Wallets retrieved successfully'
       });
     } catch (error) {
-      // Error handling
       res.status(500).json({
         success: false,
         error: error.message
@@ -24,13 +20,11 @@ export const walletController = {
     }
   },
 
-  // Get wallet by currency
   getWalletByCurrency: async (req, res) => {
     try {
       const { currency } = req.params;
       const userId = req.user.id;
 
-      // Validate currency
       if (!walletService.isValidCurrency(currency)) {
         return res.status(400).json({
           success: false,
@@ -38,7 +32,6 @@ export const walletController = {
         });
       }
 
-      // Business logic - fetch wallet by currency
       const wallet = await walletService.getWalletByCurrency(userId, currency);
       
       if (!wallet) {
@@ -60,7 +53,6 @@ export const walletController = {
     }
   },
 
-  // Get wallet summary
   getWalletSummary: async (req, res) => {
     try {
       const userId = req.user.id;

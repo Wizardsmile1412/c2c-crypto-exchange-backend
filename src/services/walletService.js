@@ -1,5 +1,7 @@
-import { Wallet, User } from '../models/index.js';
-import { Op } from 'sequelize';
+import db from '../models/index.js';
+import { Op } from "sequelize";
+
+const { Wallet, User } = db;
 
 export const walletService = {
   /**
@@ -11,8 +13,15 @@ export const walletService = {
     try {
       const wallets = await Wallet.findAll({
         where: { user_id: userId },
-        attributes: ['id', 'currency', 'balance', 'locked_balance', 'createdAt', 'updatedAt'],
-        order: [['currency', 'ASC']]
+        attributes: [
+          "id",
+          "currency",
+          "balance",
+          "locked_balance",
+          "createdAt",
+          "updatedAt",
+        ],
+        order: [["currency", "ASC"]],
       });
       return wallets;
     } catch (error) {
@@ -29,11 +38,18 @@ export const walletService = {
   getWalletByCurrency: async (userId, currency) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { 
-          user_id: userId, 
-          currency: currency.toUpperCase() 
+        where: {
+          user_id: userId,
+          currency: currency.toUpperCase(),
         },
-        attributes: ['id', 'currency', 'balance', 'locked_balance', 'createdAt', 'updatedAt']
+        attributes: [
+          "id",
+          "currency",
+          "balance",
+          "locked_balance",
+          "createdAt",
+          "updatedAt",
+        ],
       });
       return wallet;
     } catch (error) {
@@ -52,13 +68,13 @@ export const walletService = {
     try {
       const wallet = await Wallet.findOne({
         where: { user_id: userId, currency: currency.toUpperCase() },
-        attributes: ['balance']
+        attributes: ["balance"],
       });
-      
+
       if (!wallet) {
         return false;
       }
-      
+
       return parseFloat(wallet.balance) >= parseFloat(amount);
     } catch (error) {
       throw new Error(`Failed to check balance: ${error.message}`);
@@ -75,24 +91,24 @@ export const walletService = {
   lockBalance: async (userId, currency, amount) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { user_id: userId, currency: currency.toUpperCase() }
+        where: { user_id: userId, currency: currency.toUpperCase() },
       });
 
       if (!wallet) {
-        throw new Error('Wallet not found');
+        throw new Error("Wallet not found");
       }
 
       const availableBalance = parseFloat(wallet.balance);
       const lockAmount = parseFloat(amount);
 
       if (availableBalance < lockAmount) {
-        throw new Error('Insufficient balance to lock');
+        throw new Error("Insufficient balance to lock");
       }
 
       // Move amount from balance to locked_balance
       const updatedWallet = await wallet.update({
         balance: availableBalance - lockAmount,
-        locked_balance: parseFloat(wallet.locked_balance) + lockAmount
+        locked_balance: parseFloat(wallet.locked_balance) + lockAmount,
       });
 
       return updatedWallet;
@@ -111,24 +127,24 @@ export const walletService = {
   unlockBalance: async (userId, currency, amount) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { user_id: userId, currency: currency.toUpperCase() }
+        where: { user_id: userId, currency: currency.toUpperCase() },
       });
 
       if (!wallet) {
-        throw new Error('Wallet not found');
+        throw new Error("Wallet not found");
       }
 
       const lockedBalance = parseFloat(wallet.locked_balance);
       const unlockAmount = parseFloat(amount);
 
       if (lockedBalance < unlockAmount) {
-        throw new Error('Insufficient locked balance to unlock');
+        throw new Error("Insufficient locked balance to unlock");
       }
 
       // Move amount from locked_balance back to balance
       const updatedWallet = await wallet.update({
         balance: parseFloat(wallet.balance) + unlockAmount,
-        locked_balance: lockedBalance - unlockAmount
+        locked_balance: lockedBalance - unlockAmount,
       });
 
       return updatedWallet;
@@ -147,15 +163,15 @@ export const walletService = {
   addBalance: async (userId, currency, amount) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { user_id: userId, currency: currency.toUpperCase() }
+        where: { user_id: userId, currency: currency.toUpperCase() },
       });
 
       if (!wallet) {
-        throw new Error('Wallet not found');
+        throw new Error("Wallet not found");
       }
 
       const updatedWallet = await wallet.update({
-        balance: parseFloat(wallet.balance) + parseFloat(amount)
+        balance: parseFloat(wallet.balance) + parseFloat(amount),
       });
 
       return updatedWallet;
@@ -174,22 +190,22 @@ export const walletService = {
   deductBalance: async (userId, currency, amount) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { user_id: userId, currency: currency.toUpperCase() }
+        where: { user_id: userId, currency: currency.toUpperCase() },
       });
 
       if (!wallet) {
-        throw new Error('Wallet not found');
+        throw new Error("Wallet not found");
       }
 
       const currentBalance = parseFloat(wallet.balance);
       const deductAmount = parseFloat(amount);
 
       if (currentBalance < deductAmount) {
-        throw new Error('Insufficient balance to deduct');
+        throw new Error("Insufficient balance to deduct");
       }
 
       const updatedWallet = await wallet.update({
-        balance: currentBalance - deductAmount
+        balance: currentBalance - deductAmount,
       });
 
       return updatedWallet;
@@ -208,22 +224,22 @@ export const walletService = {
   deductLockedBalance: async (userId, currency, amount) => {
     try {
       const wallet = await Wallet.findOne({
-        where: { user_id: userId, currency: currency.toUpperCase() }
+        where: { user_id: userId, currency: currency.toUpperCase() },
       });
 
       if (!wallet) {
-        throw new Error('Wallet not found');
+        throw new Error("Wallet not found");
       }
 
       const lockedBalance = parseFloat(wallet.locked_balance);
       const deductAmount = parseFloat(amount);
 
       if (lockedBalance < deductAmount) {
-        throw new Error('Insufficient locked balance to deduct');
+        throw new Error("Insufficient locked balance to deduct");
       }
 
       const updatedWallet = await wallet.update({
-        locked_balance: lockedBalance - deductAmount
+        locked_balance: lockedBalance - deductAmount,
       });
 
       return updatedWallet;
@@ -243,36 +259,36 @@ export const walletService = {
   transferBalance: async (fromUserId, toUserId, currency, amount) => {
     try {
       const fromWallet = await Wallet.findOne({
-        where: { user_id: fromUserId, currency: currency.toUpperCase() }
+        where: { user_id: fromUserId, currency: currency.toUpperCase() },
       });
 
       const toWallet = await Wallet.findOne({
-        where: { user_id: toUserId, currency: currency.toUpperCase() }
+        where: { user_id: toUserId, currency: currency.toUpperCase() },
       });
 
       if (!fromWallet || !toWallet) {
-        throw new Error('One or both wallets not found');
+        throw new Error("One or both wallets not found");
       }
 
       const transferAmount = parseFloat(amount);
       const fromBalance = parseFloat(fromWallet.balance);
 
       if (fromBalance < transferAmount) {
-        throw new Error('Insufficient balance for transfer');
+        throw new Error("Insufficient balance for transfer");
       }
 
       // Update both wallets
       const updatedFromWallet = await fromWallet.update({
-        balance: fromBalance - transferAmount
+        balance: fromBalance - transferAmount,
       });
 
       const updatedToWallet = await toWallet.update({
-        balance: parseFloat(toWallet.balance) + transferAmount
+        balance: parseFloat(toWallet.balance) + transferAmount,
       });
 
       return {
         fromWallet: updatedFromWallet,
-        toWallet: updatedToWallet
+        toWallet: updatedToWallet,
       };
     } catch (error) {
       throw new Error(`Failed to transfer balance: ${error.message}`);
@@ -286,14 +302,14 @@ export const walletService = {
    */
   createInitialWallets: async (userId) => {
     try {
-      const currencies = ['THB', 'USD', 'BTC', 'ETH', 'DOGE', 'XRP'];
-      
-      const walletPromises = currencies.map(currency => 
+      const currencies = ["THB", "USD", "BTC", "ETH", "DOGE", "XRP"];
+
+      const walletPromises = currencies.map((currency) =>
         Wallet.create({
           user_id: userId,
           currency,
           balance: 0,
-          locked_balance: 0
+          locked_balance: 0,
         })
       );
 
@@ -313,21 +329,25 @@ export const walletService = {
     try {
       const wallets = await Wallet.findAll({
         where: { user_id: userId },
-        attributes: ['currency', 'balance', 'locked_balance']
+        attributes: ["currency", "balance", "locked_balance"],
       });
 
       const summary = {
         totalWallets: wallets.length,
-        fiatWallets: wallets.filter(w => ['THB', 'USD'].includes(w.currency)),
-        cryptoWallets: wallets.filter(w => ['BTC', 'ETH', 'DOGE', 'XRP'].includes(w.currency)),
+        fiatWallets: wallets.filter((w) => ["THB", "USD"].includes(w.currency)),
+        cryptoWallets: wallets.filter((w) =>
+          ["BTC", "ETH", "DOGE", "XRP"].includes(w.currency)
+        ),
         totalBalance: {},
-        totalLockedBalance: {}
+        totalLockedBalance: {},
       };
 
       // Calculate totals by currency
-      wallets.forEach(wallet => {
+      wallets.forEach((wallet) => {
         summary.totalBalance[wallet.currency] = parseFloat(wallet.balance);
-        summary.totalLockedBalance[wallet.currency] = parseFloat(wallet.locked_balance);
+        summary.totalLockedBalance[wallet.currency] = parseFloat(
+          wallet.locked_balance
+        );
       });
 
       return summary;
@@ -342,7 +362,7 @@ export const walletService = {
    * @returns {boolean} True if valid, false otherwise
    */
   isValidCurrency: (currency) => {
-    const validCurrencies = ['THB', 'USD', 'BTC', 'ETH', 'DOGE', 'XRP'];
+    const validCurrencies = ["THB", "USD", "BTC", "ETH", "DOGE", "XRP"];
     return validCurrencies.includes(currency.toUpperCase());
   },
 
@@ -352,7 +372,7 @@ export const walletService = {
    * @returns {boolean} True if fiat currency, false otherwise
    */
   isFiatCurrency: (currency) => {
-    const fiatCurrencies = ['THB', 'USD'];
+    const fiatCurrencies = ["THB", "USD"];
     return fiatCurrencies.includes(currency.toUpperCase());
   },
 
@@ -362,7 +382,7 @@ export const walletService = {
    * @returns {boolean} True if crypto currency, false otherwise
    */
   isCryptoCurrency: (currency) => {
-    const cryptoCurrencies = ['BTC', 'ETH', 'DOGE', 'XRP'];
+    const cryptoCurrencies = ["BTC", "ETH", "DOGE", "XRP"];
     return cryptoCurrencies.includes(currency.toUpperCase());
-  }
+  },
 };
