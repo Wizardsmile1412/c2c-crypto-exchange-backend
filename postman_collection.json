@@ -1,467 +1,662 @@
 {
-    "info": {
-        "_postman_id": "828beb9b-1bf2-4876-aebb-2c4a4cbdb495",
-        "name": "C2C Crypto Exchange API",
-        "description": "Testing collection for crypto exchange backend",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        "_exporter_id": "43388699"
-    },
-    "item": [
-        {
-            "name": "Health Check",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/health",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "health"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Register User",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Register Second User",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"username\": \"testuser2\",\n  \"email\": \"test2@example.com\",\n  \"password\": \"password123\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Login User",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "if (responseCode.code === 200) {",
-                            "    var jsonData = JSON.parse(responseBody);",
-                            "    if (jsonData.success && jsonData.data.token) {",
-                            "        pm.environment.set(\"token\", jsonData.data.token);",
-                            "    }",
-                            "}"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/login",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "login"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get All Wallets",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/wallets/",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "wallets",
-                        ""
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Wallet Summary",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/wallets/summary",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "wallets",
-                        "summary"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get BTC Wallet",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/wallets/BTC",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "wallets",
-                        "BTC"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Search Users for Transfer",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/transfer/search-users?query=test2@example.com",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer",
-                        "search-users"
-                    ],
-                    "query": [
-                        {
-                            "key": "query",
-                            "value": "test2@example.com"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Transfer BTC by Email",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    },
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"recipient\": \"test2@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"0.001\",\n  \"note\": \"Test transfer of Bitcoin\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/transfer",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Transfer THB by Username",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    },
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"recipient\": \"testuser2\",\n  \"currency\": \"THB\",\n  \"amount\": \"1000\",\n  \"note\": \"Test transfer of Thai Baht\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/transfer",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Transfer ETH by User ID",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    },
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"recipient\": \"2\",\n  \"currency\": \"ETH\",\n  \"amount\": \"0.1\",\n  \"note\": \"Test transfer of Ethereum\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/transfer",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Transfer with Insufficient Balance",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    },
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"recipient\": \"test2@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"999\",\n  \"note\": \"This should fail - insufficient balance\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/transfer",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Transfer to Self (Should Fail)",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    },
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"recipient\": \"test@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"0.001\",\n  \"note\": \"This should fail - self transfer\"\n}"
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/transfer",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Transfer History",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/transfer/history",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer",
-                        "history"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Transfer History - BTC Only",
-            "request": {
-                "method": "GET",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/transfer/history?currency=BTC&limit=5",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "transfer",
-                        "history"
-                    ],
-                    "query": [
-                        {
-                            "key": "currency",
-                            "value": "BTC"
-                        },
-                        {
-                            "key": "limit",
-                            "value": "5"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Logout",
-            "request": {
-                "method": "POST",
-                "header": [
-                    {
-                        "key": "Authorization",
-                        "value": "Bearer {{token}}"
-                    }
-                ],
-                "url": {
-                    "raw": "{{base_url}}/api/auth/logout",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "logout"
-                    ]
-                }
-            },
-            "response": []
+  "info": {
+    "_postman_id": "828beb9b-1bf2-4876-aebb-2c4a4cbdb495",
+    "name": "C2C Crypto Exchange API",
+    "description": "Testing collection for crypto exchange backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43388699"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
         }
-    ]
+      },
+      "response": []
+    },
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register Second User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser2\",\n  \"email\": \"test2@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (responseCode.code === 200) {",
+              "    var jsonData = JSON.parse(responseBody);",
+              "    if (jsonData.success && jsonData.data.token) {",
+              "        pm.environment.set(\"token\", jsonData.data.token);",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Wallets",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/wallets/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "wallets", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Wallet Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/wallets/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "wallets", "summary"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get BTC Wallet",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/wallets/BTC",
+          "host": ["{{base_url}}"],
+          "path": ["api", "wallets", "BTC"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Users for Transfer",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/transfer/search-users?query=test2@example.com",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer", "search-users"],
+          "query": [
+            {
+              "key": "query",
+              "value": "test2@example.com"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer BTC by Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipient\": \"test2@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"0.001\",\n  \"note\": \"Test transfer of Bitcoin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfer",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer THB by Username",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipient\": \"testuser2\",\n  \"currency\": \"THB\",\n  \"amount\": \"1000\",\n  \"note\": \"Test transfer of Thai Baht\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfer",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer ETH by User ID",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipient\": \"2\",\n  \"currency\": \"ETH\",\n  \"amount\": \"0.1\",\n  \"note\": \"Test transfer of Ethereum\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfer",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer with Insufficient Balance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipient\": \"test2@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"999\",\n  \"note\": \"This should fail - insufficient balance\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfer",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer to Self (Should Fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipient\": \"test@example.com\",\n  \"currency\": \"BTC\",\n  \"amount\": \"0.001\",\n  \"note\": \"This should fail - self transfer\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfer",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Transfer History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/transfer/history",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer", "history"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Transfer History - BTC Only",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/transfer/history?currency=BTC&limit=5",
+          "host": ["{{base_url}}"],
+          "path": ["api", "transfer", "history"],
+          "query": [
+            {
+              "key": "currency",
+              "value": "BTC"
+            },
+            {
+              "key": "limit",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create BUY Order - BTC/THB",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderType\": \"BUY\",\n  \"currency\": \"BTC\",\n  \"fiatCurrency\": \"THB\",\n  \"amount\": \"0.1\",\n  \"pricePerUnit\": \"1500000\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create SELL Order - ETH/USD",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderType\": \"SELL\",\n  \"currency\": \"ETH\",\n  \"fiatCurrency\": \"USD\",\n  \"amount\": \"1.0\",\n  \"pricePerUnit\": \"2500\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create BUY Order - DOGE/THB",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderType\": \"BUY\",\n  \"currency\": \"DOGE\",\n  \"fiatCurrency\": \"THB\",\n  \"amount\": \"1000\",\n  \"pricePerUnit\": \"15\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Order with Insufficient Balance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderType\": \"BUY\",\n  \"currency\": \"BTC\",\n  \"fiatCurrency\": \"THB\",\n  \"amount\": \"10\",\n  \"pricePerUnit\": \"10000000\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All User Orders",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Orders - BUY Only",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders?orderType=BUY&currency=BTC",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"],
+          "query": [
+            {
+              "key": "orderType",
+              "value": "BUY"
+            },
+            {
+              "key": "currency",
+              "value": "BTC"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Orders - OPEN Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders?status=OPEN&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"],
+          "query": [
+            {
+              "key": "status",
+              "value": "OPEN"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Market Orders - All",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders/market",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders", "market"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Market Orders - BTC/THB",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders/market?currency=BTC&fiatCurrency=THB",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders", "market"],
+          "query": [
+            {
+              "key": "currency",
+              "value": "BTC"
+            },
+            {
+              "key": "fiatCurrency",
+              "value": "THB"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Market Orders - BUY Orders Only",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders/market?orderType=BUY",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders", "market"],
+          "query": [
+            {
+              "key": "orderType",
+              "value": "BUY"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Order By ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel Order",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orders/1/cancel",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders", "1", "cancel"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/logout",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "logout"]
+        }
+      },
+      "response": []
+    }
+  ]
 }
