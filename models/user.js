@@ -16,6 +16,18 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Fiat_transaction, { foreignKey: "user_id" });
       // User hasMany External_transfer
       this.hasMany(models.External_transfer, { foreignKey: "user_id" });
+
+      // User hasMany Internal_transfer as SentTransfers
+      this.hasMany(models.Internal_transfer, {
+        foreignKey: "from_user_id",
+        as: "SentTransfers",
+      });
+      // User hasMany Internal_transfer as ReceivedTransfers
+      this.hasMany(models.Internal_transfer, {
+        foreignKey: "to_user_id",
+        as: "ReceivedTransfers",
+      });
+
       // User hasMany Order_match_event as buyer
       this.hasMany(models.Order_match_event, {
         foreignKey: "buyer_id",

@@ -1,4 +1,4 @@
-import db from '../models/index.js';
+import db from "../models/index.js";
 import { Op } from "sequelize";
 
 const { Wallet, User } = db;
@@ -277,7 +277,6 @@ export const walletService = {
         throw new Error("Insufficient balance for transfer");
       }
 
-      // Update both wallets
       const updatedFromWallet = await fromWallet.update({
         balance: fromBalance - transferAmount,
       });
@@ -330,24 +329,39 @@ export const walletService = {
       const wallets = await Wallet.findAll({
         where: { user_id: userId },
         attributes: ["currency", "balance", "locked_balance"],
+        order: [["currency", "ASC"]],
       });
 
       const summary = {
         totalWallets: wallets.length,
-        fiatWallets: wallets.filter((w) => ["THB", "USD"].includes(w.currency)),
-        cryptoWallets: wallets.filter((w) =>
-          ["BTC", "ETH", "DOGE", "XRP"].includes(w.currency)
-        ),
+        fiatWallets: [],
+        cryptoWallets: [],
         totalBalance: {},
         totalLockedBalance: {},
       };
 
-      // Calculate totals by currency
+      // Process each wallet
       wallets.forEach((wallet) => {
-        summary.totalBalance[wallet.currency] = parseFloat(wallet.balance);
-        summary.totalLockedBalance[wallet.currency] = parseFloat(
-          wallet.locked_balance
-        );
+        const currency = wallet.currency;
+        const balance = parseFloat(wallet.balance);
+        const lockedBalance = parseFloat(wallet.locked_balance);
+
+        // Add to totals
+        summary.totalBalance[currency] = balance;
+        summary.totalLockedBalance[currency] = lockedBalance;
+
+        // Categorize wallets
+        const walletData = {
+          currency: currency,
+          balance: wallet.balance,
+          locked_balance: wallet.locked_balance,
+        };
+
+        if (["THB", "USD"].includes(currency)) {
+          summary.fiatWallets.push(walletData);
+        } else if (["BTC", "ETH", "DOGE", "XRP"].includes(currency)) {
+          summary.cryptoWallets.push(walletData);
+        }
       });
 
       return summary;
