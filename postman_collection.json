@@ -357,6 +357,742 @@
       "response": []
     },
     {
+      "name": "Exchange Rate Tests",
+      "item": [
+        {
+          "name": "Initialize Default Exchange Rates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is successful\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Default rates were created\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "    pm.expect(jsonData.message).to.include('initialized');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/initialize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "initialize"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Exchange Rates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains exchange rates\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each rate has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const rate = jsonData.data[0];",
+                  "        pm.expect(rate).to.have.property('base_currency');",
+                  "        pm.expect(rate).to.have.property('quote_currency');",
+                  "        pm.expect(rate).to.have.property('rate');",
+                  "        pm.expect(rate).to.have.property('provider');",
+                  "        pm.expect(rate).to.have.property('is_active');",
+                  "        pm.expect(rate).to.have.property('last_updated');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Exchange Rate - BTC/THB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains BTC/THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Rate is active\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.is_active).to.be.true;",
+                  "});",
+                  "",
+                  "// Store rate for conversion test",
+                  "pm.test(\"Store BTC/THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set(\"btc_thb_rate\", jsonData.data.rate);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/BTC/THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "BTC", "THB"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Exchange Rate - ETH/USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains ETH/USD rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('ETH');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('USD');",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/ETH/USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "ETH", "USD"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Non-existent Exchange Rate (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 500 (rate not found)\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates error\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/INVALID/CURRENCY",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "INVALID", "CURRENCY"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Currency - 1 BTC to THB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion result is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data.amount).to.equal(1);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.convertedAmount).to.be.above(0);",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion math is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const expectedAmount = jsonData.data.amount * jsonData.data.rate;",
+                  "    pm.expect(jsonData.data.convertedAmount).to.equal(expectedAmount);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=1&from=BTC&to=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "1"
+                },
+                {
+                  "key": "from",
+                  "value": "BTC"
+                },
+                {
+                  "key": "to",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Currency - 0.5 ETH to USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion result is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.amount).to.equal(0.5);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('ETH');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('USD');",
+                  "    pm.expect(jsonData.data.convertedAmount).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=0.5&from=ETH&to=USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "0.5"
+                },
+                {
+                  "key": "from",
+                  "value": "ETH"
+                },
+                {
+                  "key": "to",
+                  "value": "USD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Same Currency (Should Return Same Amount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Same currency conversion returns same amount\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.amount).to.equal(100);",
+                  "    pm.expect(jsonData.data.convertedAmount).to.equal(100);",
+                  "    pm.expect(jsonData.data.rate).to.equal(1);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('THB');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=100&from=THB&to=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "100"
+                },
+                {
+                  "key": "from",
+                  "value": "THB"
+                },
+                {
+                  "key": "to",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert with Invalid Parameters (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 (bad request)\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates missing parameters\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trading Pairs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains trading pairs\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each pair has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const pair = jsonData.data[0];",
+                  "        pm.expect(pair).to.have.property('base_currency');",
+                  "        pm.expect(pair).to.have.property('quote_currency');",
+                  "        pm.expect(pair).to.have.property('rate');",
+                  "        pm.expect(pair).to.have.property('pair');",
+                  "        pm.expect(pair).to.have.property('provider');",
+                  "        pm.expect(pair).to.have.property('last_updated');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Contains BTC/THB pair\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const btcThbPair = jsonData.data.find(pair => pair.pair === 'BTC/THB');",
+                  "    pm.expect(btcThbPair).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/pairs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "pairs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Market Prices",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains market prices\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test(\"Contains BTC prices\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.have.property('BTC');",
+                  "    pm.expect(jsonData.data.BTC).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test(\"BTC has THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.BTC) {",
+                  "        pm.expect(jsonData.data.BTC).to.have.property('THB');",
+                  "        pm.expect(jsonData.data.BTC.THB).to.have.property('rate');",
+                  "        pm.expect(jsonData.data.BTC.THB.rate).to.be.above(0);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/prices",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "prices"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio Value (Protected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains portfolio valuation\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data).to.have.property('targetCurrency');",
+                  "    pm.expect(jsonData.data).to.have.property('totalValue');",
+                  "    pm.expect(jsonData.data).to.have.property('breakdown');",
+                  "});",
+                  "",
+                  "pm.test(\"Total value is a number\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.totalValue).to.be.a('number');",
+                  "    pm.expect(jsonData.data.totalValue).to.be.at.least(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Breakdown is an object\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.breakdown).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/portfolio-value?targetCurrency=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "portfolio-value"],
+              "query": [
+                {
+                  "key": "targetCurrency",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio Value in USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Target currency is USD\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.targetCurrency).to.equal('USD');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/portfolio-value?targetCurrency=USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "portfolio-value"],
+              "query": [
+                {
+                  "key": "targetCurrency",
+                  "value": "USD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Exchange Rate Manually (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Rate was updated successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.message).to.include('updated');",
+                  "});",
+                  "",
+                  "pm.test(\"Updated rate has correct values\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.rate).to.equal('1600000.00000000');",
+                  "    pm.expect(jsonData.data.provider).to.equal('MANUAL');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseCurrency\": \"BTC\",\n  \"quoteCurrency\": \"THB\",\n  \"rate\": 1600000,\n  \"provider\": \"MANUAL\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Exchange Rate with Invalid Data (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 (bad request)\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates missing required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseCurrency\": \"BTC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch External Rates from CoinGecko (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"External rates fetched successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.message).to.include('fetched');",
+                  "});",
+                  "",
+                  "pm.test(\"Fetched rates have COINGECKO provider\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const rate = jsonData.data[0];",
+                  "        pm.expect(rate.provider).to.equal('COINGECKO');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/fetch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "fetch"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Create BUY Order - BTC/THB",
       "request": {
         "method": "POST",
