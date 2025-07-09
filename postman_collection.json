@@ -641,6 +641,100 @@
       "response": []
     },
     {
+      "name": "Create BUY Order - Auto Match",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderType\": \"BUY\",\n  \"currency\": \"BTC\",\n  \"fiatCurrency\": \"THB\",\n  \"amount\": \"0.1\",\n  \"pricePerUnit\": \"1600000\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orders",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Trade History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/matches/trades",
+          "host": ["{{base_url}}"],
+          "path": ["api", "matches", "trades"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Market Stats - BTC/THB",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/matches/market-stats?currency=BTC&fiatCurrency=THB",
+          "host": ["{{base_url}}"],
+          "path": ["api", "matches", "market-stats"],
+          "query": [
+            {
+              "key": "currency",
+              "value": "BTC"
+            },
+            {
+              "key": "fiatCurrency",
+              "value": "THB"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Recent Trades - BTC/THB",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/matches/recent?currency=BTC&fiatCurrency=THB&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["api", "matches", "recent"],
+          "query": [
+            {
+              "key": "currency",
+              "value": "BTC"
+            },
+            {
+              "key": "fiatCurrency",
+              "value": "THB"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "Logout",
       "request": {
         "method": "POST",
