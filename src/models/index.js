@@ -1,14 +1,14 @@
 import { Sequelize, DataTypes } from "sequelize";
 import dotenv from "dotenv";
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error('DATABASE_URL environment variable is not set');
+  throw new Error("DATABASE_URL environment variable is not set");
 }
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -199,7 +199,6 @@ const Trade_order = sequelize.define(
   }
 );
 
-// Add Order_match_event model
 const Order_match_event = sequelize.define(
   "Order_match_event",
   {
@@ -280,6 +279,53 @@ const Order_match_event = sequelize.define(
   }
 );
 
+const Exchange_rate = sequelize.define(
+  "Exchange_rate",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    base_currency: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    quote_currency: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    rate: {
+      type: DataTypes.DECIMAL(20, 8),
+      allowNull: false,
+    },
+    provider: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: "MANUAL",
+    },
+    last_updated: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+  },
+  {
+    tableName: "Exchange_rates",
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["base_currency", "quote_currency"],
+      },
+    ],
+  }
+);
+
 // Define associations
 User.hasMany(Trade_order, { foreignKey: "user_id", as: "orders" });
 Trade_order.belongsTo(User, { foreignKey: "user_id", as: "user" });
@@ -331,6 +377,7 @@ const db = {
   Internal_transfer,
   Trade_order,
   Order_match_event,
+  Exchange_rate,
 };
 
 export default db;
@@ -340,5 +387,6 @@ export {
   Internal_transfer,
   Trade_order,
   Order_match_event,
+  Exchange_rate,
   sequelize,
 };
