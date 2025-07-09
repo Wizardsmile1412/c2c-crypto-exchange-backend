@@ -357,6 +357,1833 @@
       "response": []
     },
     {
+      "name": "Exchange Rate Tests",
+      "item": [
+        {
+          "name": "Initialize Default Exchange Rates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is successful\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Default rates were created\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "    pm.expect(jsonData.message).to.include('initialized');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/initialize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "initialize"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Exchange Rates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains exchange rates\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each rate has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const rate = jsonData.data[0];",
+                  "        pm.expect(rate).to.have.property('base_currency');",
+                  "        pm.expect(rate).to.have.property('quote_currency');",
+                  "        pm.expect(rate).to.have.property('rate');",
+                  "        pm.expect(rate).to.have.property('provider');",
+                  "        pm.expect(rate).to.have.property('is_active');",
+                  "        pm.expect(rate).to.have.property('last_updated');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Exchange Rate - BTC/THB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains BTC/THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Rate is active\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.is_active).to.be.true;",
+                  "});",
+                  "",
+                  "// Store rate for conversion test",
+                  "pm.test(\"Store BTC/THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set(\"btc_thb_rate\", jsonData.data.rate);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/BTC/THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "BTC", "THB"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Exchange Rate - ETH/USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains ETH/USD rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('ETH');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('USD');",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/ETH/USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "ETH", "USD"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Non-existent Exchange Rate (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 500 (rate not found)\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates error\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/INVALID/CURRENCY",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "INVALID", "CURRENCY"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Currency - 1 BTC to THB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion result is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data.amount).to.equal(1);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.convertedAmount).to.be.above(0);",
+                  "    pm.expect(jsonData.data.rate).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion math is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const expectedAmount = jsonData.data.amount * jsonData.data.rate;",
+                  "    pm.expect(jsonData.data.convertedAmount).to.equal(expectedAmount);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=1&from=BTC&to=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "1"
+                },
+                {
+                  "key": "from",
+                  "value": "BTC"
+                },
+                {
+                  "key": "to",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Currency - 0.5 ETH to USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Conversion result is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.amount).to.equal(0.5);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('ETH');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('USD');",
+                  "    pm.expect(jsonData.data.convertedAmount).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=0.5&from=ETH&to=USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "0.5"
+                },
+                {
+                  "key": "from",
+                  "value": "ETH"
+                },
+                {
+                  "key": "to",
+                  "value": "USD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert Same Currency (Should Return Same Amount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Same currency conversion returns same amount\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.amount).to.equal(100);",
+                  "    pm.expect(jsonData.data.convertedAmount).to.equal(100);",
+                  "    pm.expect(jsonData.data.rate).to.equal(1);",
+                  "    pm.expect(jsonData.data.fromCurrency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.toCurrency).to.equal('THB');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=100&from=THB&to=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "100"
+                },
+                {
+                  "key": "from",
+                  "value": "THB"
+                },
+                {
+                  "key": "to",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convert with Invalid Parameters (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 (bad request)\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates missing parameters\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/convert?amount=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "convert"],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trading Pairs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains trading pairs\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each pair has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const pair = jsonData.data[0];",
+                  "        pm.expect(pair).to.have.property('base_currency');",
+                  "        pm.expect(pair).to.have.property('quote_currency');",
+                  "        pm.expect(pair).to.have.property('rate');",
+                  "        pm.expect(pair).to.have.property('pair');",
+                  "        pm.expect(pair).to.have.property('provider');",
+                  "        pm.expect(pair).to.have.property('last_updated');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Contains BTC/THB pair\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const btcThbPair = jsonData.data.find(pair => pair.pair === 'BTC/THB');",
+                  "    pm.expect(btcThbPair).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/pairs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "pairs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Market Prices",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains market prices\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test(\"Contains BTC prices\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.have.property('BTC');",
+                  "    pm.expect(jsonData.data.BTC).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test(\"BTC has THB rate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.BTC) {",
+                  "        pm.expect(jsonData.data.BTC).to.have.property('THB');",
+                  "        pm.expect(jsonData.data.BTC.THB).to.have.property('rate');",
+                  "        pm.expect(jsonData.data.BTC.THB.rate).to.be.above(0);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/prices",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "prices"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio Value (Protected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains portfolio valuation\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data).to.have.property('targetCurrency');",
+                  "    pm.expect(jsonData.data).to.have.property('totalValue');",
+                  "    pm.expect(jsonData.data).to.have.property('breakdown');",
+                  "});",
+                  "",
+                  "pm.test(\"Total value is a number\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.totalValue).to.be.a('number');",
+                  "    pm.expect(jsonData.data.totalValue).to.be.at.least(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Breakdown is an object\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.breakdown).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/portfolio-value?targetCurrency=THB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "portfolio-value"],
+              "query": [
+                {
+                  "key": "targetCurrency",
+                  "value": "THB"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio Value in USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Target currency is USD\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.targetCurrency).to.equal('USD');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/portfolio-value?targetCurrency=USD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "portfolio-value"],
+              "query": [
+                {
+                  "key": "targetCurrency",
+                  "value": "USD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Exchange Rate Manually (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Rate was updated successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.message).to.include('updated');",
+                  "});",
+                  "",
+                  "pm.test(\"Updated rate has correct values\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.base_currency).to.equal('BTC');",
+                  "    pm.expect(jsonData.data.quote_currency).to.equal('THB');",
+                  "    pm.expect(jsonData.data.rate).to.equal('1600000.00000000');",
+                  "    pm.expect(jsonData.data.provider).to.equal('MANUAL');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseCurrency\": \"BTC\",\n  \"quoteCurrency\": \"THB\",\n  \"rate\": 1600000,\n  \"provider\": \"MANUAL\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Exchange Rate with Invalid Data (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 (bad request)\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates missing required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseCurrency\": \"BTC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch External Rates from CoinGecko (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"External rates fetched successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.message).to.include('fetched');",
+                  "});",
+                  "",
+                  "pm.test(\"Fetched rates have COINGECKO provider\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const rate = jsonData.data[0];",
+                  "        pm.expect(rate.provider).to.equal('COINGECKO');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/exchange/rates/fetch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "exchange", "rates", "fetch"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payment System Tests",
+      "item": [
+        {
+          "name": "Create THB Deposit Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Deposit request created successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.message).to.include('created successfully');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction has correct fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const transaction = jsonData.data;",
+                  "    pm.expect(transaction).to.have.property('id');",
+                  "    pm.expect(transaction).to.have.property('user_id');",
+                  "    pm.expect(transaction).to.have.property('type');",
+                  "    pm.expect(transaction).to.have.property('currency');",
+                  "    pm.expect(transaction).to.have.property('amount');",
+                  "    pm.expect(transaction).to.have.property('status');",
+                  "    pm.expect(transaction).to.have.property('provider');",
+                  "    pm.expect(transaction).to.have.property('gateway_txn_id');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction details are correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const transaction = jsonData.data;",
+                  "    pm.expect(transaction.type).to.equal('DEPOSIT');",
+                  "    pm.expect(transaction.currency).to.equal('THB');",
+                  "    pm.expect(parseFloat(transaction.amount)).to.equal(1000);",
+                  "    pm.expect(transaction.status).to.equal('PROCESSING');",
+                  "    pm.expect(transaction.provider).to.equal('MOCK_GATEWAY');",
+                  "});",
+                  "",
+                  "pm.test(\"Gateway info is provided\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.gatewayInfo).to.be.an('object');",
+                  "    pm.expect(jsonData.gatewayInfo).to.have.property('transactionId');",
+                  "    pm.expect(jsonData.gatewayInfo).to.have.property('paymentUrl');",
+                  "    pm.expect(jsonData.gatewayInfo).to.have.property('instructions');",
+                  "});",
+                  "",
+                  "// Store transaction ID for later tests - FIXED SCOPE",
+                  "if (pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.success && jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('thb_deposit_id', jsonData.data.id);",
+                  "        console.log('✅ Stored THB deposit ID:', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"THB\",\n  \"amount\": 1000,\n  \"provider\": \"MOCK_GATEWAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create USD Deposit Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"USD deposit created successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.currency).to.equal('USD');",
+                  "    pm.expect(parseFloat(jsonData.data.amount)).to.equal(50);",
+                  "});",
+                  "",
+                  "// Store USD deposit ID",
+                  "if (pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.success && jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('usd_deposit_id', jsonData.data.id);",
+                  "        console.log('✅ Stored USD deposit ID:', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"USD\",\n  \"amount\": 50,\n  \"provider\": \"MOCK_GATEWAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Deposit with Invalid Currency (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or 500\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 500]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates invalid currency\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('supported');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"EUR\",\n  \"amount\": 100,\n  \"provider\": \"MOCK_GATEWAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Deposit with Amount Below Minimum (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 500\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates minimum amount error\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('Minimum deposit amount');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"THB\",\n  \"amount\": 50,\n  \"provider\": \"MOCK_GATEWAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Deposit with Missing Parameters (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates missing parameters\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"THB\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Payment Transactions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains transactions\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Each transaction has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const transaction = jsonData.data[0];",
+                  "        pm.expect(transaction).to.have.property('id');",
+                  "        pm.expect(transaction).to.have.property('type');",
+                  "        pm.expect(transaction).to.have.property('currency');",
+                  "        pm.expect(transaction).to.have.property('amount');",
+                  "        pm.expect(transaction).to.have.property('status');",
+                  "        pm.expect(transaction).to.have.property('provider');",
+                  "        pm.expect(transaction).to.have.property('createdAt');",
+                  "        pm.expect(transaction).to.have.property('updatedAt');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "transactions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Transactions - Filtered by Currency",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All transactions are THB\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    jsonData.data.forEach(transaction => {",
+                  "        pm.expect(transaction.currency).to.equal('THB');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions?currency=THB&type=DEPOSIT",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "transactions"],
+              "query": [
+                {
+                  "key": "currency",
+                  "value": "THB"
+                },
+                {
+                  "key": "type",
+                  "value": "DEPOSIT"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Transactions - With Limit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response respects limit\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.length).to.be.at.most(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions?limit=2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "transactions"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains transaction details\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data).to.have.property('id');",
+                  "    pm.expect(jsonData.data).to.have.property('user');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction includes user information\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.user).to.be.an('object');",
+                  "    pm.expect(jsonData.data.user).to.have.property('id');",
+                  "    pm.expect(jsonData.data.user).to.have.property('username');",
+                  "    pm.expect(jsonData.data.user).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions/{{thb_deposit_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "transactions", "{{thb_deposit_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Non-existent Transaction (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 500\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates transaction not found\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions/99999",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "transactions", "99999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Pending Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction cancelled successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.status).to.equal('CANCELLED');",
+                  "    pm.expect(jsonData.message).to.include('cancelled successfully');",
+                  "});",
+                  "",
+                  "pm.test(\"Cancelled transaction has completion date\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.completed_at).to.not.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions/{{usd_deposit_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "payments",
+                "transactions",
+                "{{usd_deposit_id}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Already Processed Transaction (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 500\", function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates transaction cannot be cancelled\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('cannot be cancelled');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/transactions/{{usd_deposit_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "payments",
+                "transactions",
+                "{{usd_deposit_id}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Get All Transactions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains all transactions\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Each transaction includes user and admin info\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data.length > 0) {",
+                  "        const transaction = jsonData.data[0];",
+                  "        pm.expect(transaction).to.have.property('user');",
+                  "        pm.expect(transaction.user).to.be.an('object');",
+                  "        pm.expect(transaction.user).to.have.property('id');",
+                  "        pm.expect(transaction.user).to.have.property('username');",
+                  "        pm.expect(transaction.user).to.have.property('email');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/admin/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "admin", "transactions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Get Filtered Transactions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All transactions are PROCESSING status\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    jsonData.data.forEach(transaction => {",
+                  "        pm.expect(transaction.status).to.equal('PROCESSING');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/admin/transactions?status=PROCESSING&type=DEPOSIT",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "admin", "transactions"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PROCESSING"
+                },
+                {
+                  "key": "type",
+                  "value": "DEPOSIT"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Complete Deposit Successfully",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Deposit completed successfully\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.status).to.equal('COMPLETED');",
+                  "    pm.expect(jsonData.message).to.include('completed successfully');",
+                  "});",
+                  "",
+                  "pm.test(\"Admin information is recorded\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.admin_id).to.not.be.null;",
+                  "    pm.expect(jsonData.data.admin_notes).to.not.be.null;",
+                  "    pm.expect(jsonData.data.completed_at).to.not.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"adminNotes\": \"Payment verified and approved by admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/admin/transactions/{{thb_deposit_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "payments",
+                "admin",
+                "transactions",
+                "{{thb_deposit_id}}",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Reject Deposit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// First create a new deposit to reject",
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get('base_url') + '/api/payments/deposits',",
+                  "    method: 'POST',",
+                  "    header: {",
+                  "        'Authorization': 'Bearer ' + pm.environment.get('token'),",
+                  "        'Content-Type': 'application/json'",
+                  "    },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({",
+                  "            currency: 'THB',",
+                  "            amount: 500,",
+                  "            provider: 'MOCK_GATEWAY'",
+                  "        })",
+                  "    }",
+                  "}, function(err, response) {",
+                  "    if (response.code === 201) {",
+                  "        const depositData = response.json();",
+                  "        const depositId = depositData.data.id;",
+                  "        ",
+                  "        // Now reject it",
+                  "        pm.sendRequest({",
+                  "            url: pm.environment.get('base_url') + '/api/payments/admin/transactions/' + depositId + '/complete',",
+                  "            method: 'PATCH',",
+                  "            header: {",
+                  "                'Authorization': 'Bearer ' + pm.environment.get('token'),",
+                  "                'Content-Type': 'application/json'",
+                  "            },",
+                  "            body: {",
+                  "                mode: 'raw',",
+                  "                raw: JSON.stringify({",
+                  "                    status: 'FAILED',",
+                  "                    adminNotes: 'Payment verification failed - insufficient documentation'",
+                  "                })",
+                  "            }",
+                  "        }, function(err, rejectResponse) {",
+                  "            pm.test(\"Status code is 200\", function () {",
+                  "                pm.expect(rejectResponse.code).to.equal(200);",
+                  "            });",
+                  "            ",
+                  "            pm.test(\"Deposit rejected successfully\", function () {",
+                  "                const jsonData = rejectResponse.json();",
+                  "                pm.expect(jsonData.success).to.be.true;",
+                  "                pm.expect(jsonData.data.status).to.equal('FAILED');",
+                  "                pm.expect(jsonData.message).to.include('completed successfully');",
+                  "            });",
+                  "            ",
+                  "            pm.test(\"Admin information is recorded\", function () {",
+                  "                const jsonData = rejectResponse.json();",
+                  "                pm.expect(jsonData.data.admin_id).to.not.be.null;",
+                  "                pm.expect(jsonData.data.admin_notes).to.include('insufficient documentation');",
+                  "                pm.expect(jsonData.data.completed_at).to.not.be.null;",
+                  "            });",
+                  "            ",
+                  "            // Store rejected deposit ID for potential future tests",
+                  "            pm.environment.set('rejected_deposit_id', depositId);",
+                  "            console.log('✅ Rejected deposit ID:', depositId);",
+                  "        });",
+                  "    } else {",
+                  "        pm.test(\"Failed to create test deposit for rejection\", function () {",
+                  "            pm.expect(response.code).to.equal(201);",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"THB\",\n  \"amount\": 500,\n  \"provider\": \"MOCK_GATEWAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/deposits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "deposits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Complete with Invalid Status (Should Fail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates invalid status\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.include('COMPLETED, FAILED, or CANCELLED');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INVALID_STATUS\",\n  \"adminNotes\": \"This should fail\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/admin/transactions/{{thb_deposit_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "payments",
+                "admin",
+                "transactions",
+                "{{thb_deposit_id}}",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Get Payment Statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains payment statistics\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data).to.have.property('detailed');",
+                  "    pm.expect(jsonData.data).to.have.property('summary');",
+                  "});",
+                  "",
+                  "pm.test(\"Detailed stats is an array\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.detailed).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Summary contains required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const summary = jsonData.data.summary;",
+                  "    pm.expect(summary).to.have.property('total_transactions');",
+                  "    pm.expect(summary).to.have.property('total_completed_amount');",
+                  "    pm.expect(summary).to.have.property('total_pending_amount');",
+                  "    pm.expect(summary).to.have.property('completed_transactions');",
+                  "    pm.expect(summary).to.have.property('pending_transactions');",
+                  "    pm.expect(summary).to.have.property('failed_transactions');",
+                  "});",
+                  "",
+                  "pm.test(\"All numeric fields are numbers\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const summary = jsonData.data.summary;",
+                  "    pm.expect(summary.total_transactions).to.be.a('string'); // BigInt from DB",
+                  "    pm.expect(summary.completed_transactions).to.be.a('string'); // BigInt from DB",
+                  "    pm.expect(summary.pending_transactions).to.be.a('string'); // BigInt from DB",
+                  "    pm.expect(summary.failed_transactions).to.be.a('string'); // BigInt from DB",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "admin", "stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test - Simulate Webhook",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Webhook simulation successful\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.message).to.include('simulated successfully');",
+                  "});",
+                  "",
+                  "pm.test(\"Webhook payload has required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const payload = jsonData.data;",
+                  "    pm.expect(payload).to.have.property('event');",
+                  "    pm.expect(payload).to.have.property('transactionId');",
+                  "    pm.expect(payload).to.have.property('status');",
+                  "    pm.expect(payload).to.have.property('timestamp');",
+                  "    pm.expect(payload).to.have.property('signature');",
+                  "});",
+                  "",
+                  "pm.test(\"Webhook payload has correct values\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const payload = jsonData.data;",
+                  "    pm.expect(payload.event).to.equal('payment.status.changed');",
+                  "    pm.expect(payload.transactionId).to.equal('MGW_TEST_12345');",
+                  "    pm.expect(payload.status).to.equal('COMPLETED');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gatewayTxnId\": \"MGW_TEST_12345\",\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/test/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "test", "webhook"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Wallet Balance After Deposit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"THB balance increased after deposit\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('object');",
+                  "    pm.expect(jsonData.data).to.have.property('THB');",
+                  "    ",
+                  "    // THB balance should be at least 1000 (the amount we deposited)",
+                  "    const thbBalance = parseFloat(jsonData.data.THB.balance);",
+                  "    pm.expect(thbBalance).to.be.at.least(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Wallet has correct structure\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.THB).to.have.property('balance');",
+                  "    pm.expect(jsonData.data.THB).to.have.property('currency');",
+                  "    pm.expect(jsonData.data.THB.currency).to.equal('THB');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/wallets/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets", "summary"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Create BUY Order - BTC/THB",
       "request": {
         "method": "POST",

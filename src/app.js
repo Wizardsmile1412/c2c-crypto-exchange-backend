@@ -5,6 +5,8 @@ import walletRouter from "./routes/wallet.route.js";
 import transferRouter from "./routes/transfer.route.js";
 import orderRouter from "./routes/order.route.js";
 import matchRouter from "./routes/match.route.js";
+import exchangeRouter from "./routes/exchange.route.js";
+import paymentRouter from "./routes/payment.route.js";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use("/api/wallets", walletRouter);
 app.use("/api/transfer", transferRouter); 
 app.use("/api/orders", orderRouter);
 app.use("/api/matches", matchRouter);
+app.use("/api/exchange", exchangeRouter);
+app.use("/api/payments", paymentRouter); 
 
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });
