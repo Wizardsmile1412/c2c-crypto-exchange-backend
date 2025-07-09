@@ -1,7 +1,15 @@
 import { Sequelize, DataTypes } from "sequelize";
 import dotenv from "dotenv";
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
+
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
