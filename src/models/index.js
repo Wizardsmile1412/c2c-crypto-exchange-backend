@@ -326,7 +326,110 @@ const Exchange_rate = sequelize.define(
   }
 );
 
+const Fiat_transaction = sequelize.define(
+  "Fiat_transaction",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id",
+      },
+    },
+    type: {
+      type: DataTypes.ENUM("DEPOSIT", "WITHDRAW"),
+      allowNull: false,
+    },
+    provider: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: 'MOCK_GATEWAY'
+    },
+    amount: {
+      type: DataTypes.DECIMAL(20, 8),
+      allowNull: false,
+    },
+    currency: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"),
+      allowNull: false,
+      defaultValue: "PENDING"
+    },
+    gateway_txn_id: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    gateway_reference: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    gateway_response: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    admin_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: User,
+        key: "id",
+      },
+    },
+    admin_notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    ip_address: {
+      type: DataTypes.STRING(45),
+      allowNull: true,
+    },
+    completed_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "Fiat_transactions",
+    timestamps: true,
+    indexes: [
+      {
+        fields: ["user_id"],
+      },
+      {
+        fields: ["status"],
+      },
+      {
+        fields: ["type"],
+      },
+      {
+        fields: ["currency"],
+      },
+      {
+        fields: ["gateway_txn_id"],
+      },
+      {
+        fields: ["admin_id"],
+      },
+    ],
+  }
+);
+
 // Define associations
+User.hasMany(Fiat_transaction, { foreignKey: "user_id", as: "fiatTransactions" });
+Fiat_transaction.belongsTo(User, { foreignKey: "user_id", as: "user" });
+
+User.hasMany(Fiat_transaction, { foreignKey: "admin_id", as: "processedTransactions" });
+Fiat_transaction.belongsTo(User, { foreignKey: "admin_id", as: "admin" });
+
 User.hasMany(Trade_order, { foreignKey: "user_id", as: "orders" });
 Trade_order.belongsTo(User, { foreignKey: "user_id", as: "user" });
 
@@ -378,6 +481,7 @@ const db = {
   Trade_order,
   Order_match_event,
   Exchange_rate,
+  Fiat_transaction,
 };
 
 export default db;
@@ -388,5 +492,6 @@ export {
   Trade_order,
   Order_match_event,
   Exchange_rate,
+  Fiat_transaction,
   sequelize,
 };
